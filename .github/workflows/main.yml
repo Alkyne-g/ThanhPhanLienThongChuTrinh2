@@ -1,0 +1,33 @@
+name: Judge
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Compile
+      run: g++ -std=c++17 main.cpp -o main
+
+    - name: Run tests
+      run: |
+        passed=0
+        total=5
+
+        for i in 01 02 03 04 05
+        do
+          ./main < test/$i.in > out.txt
+          if diff -q out.txt test/$i.out
+          then
+            echo "Test $i: OK"
+            passed=$((passed+1))
+          else
+            echo "Test $i: WRONG"
+          fi
+        done
+
+        echo "Passed $passed / $total"
